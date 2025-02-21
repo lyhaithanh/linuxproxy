@@ -1,6 +1,4 @@
 #!/bin/bash
-
-
 # Hàm kiểm tra địa chỉ IP
 validate_ip() {
   local ip="$1"
