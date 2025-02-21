@@ -39,16 +39,16 @@ add_proxy_settings() {
   local password="$4"
 
   local proxy_settings="
-export http_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
-export https_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
-export ftp_proxy=\"ftp://${username}:${password}@${ip_address}:${port}/\"
-export rsync_proxy=\"rsync://${username}:${password}@${ip_address}:${port}/\"
-export no_proxy=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
-export HTTP_PROXY=\"http://${username}:${password}@${ip_address}:${port}/\"
-export HTTPS_PROXY=\"http://${username}:${password}@${ip_address}:${port}/\"
-export FTP_PROXY=\"ftp://${username}:${password}@${ip_address}:${port}/\"
-export RSYNC_PROXY=\"rsync://${username}:${password}@${ip_address}:${port}/\"
-export NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
+http_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
+https_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
+ftp_proxy=\"ftp://${username}:${password}@${ip_address}:${port}/\"
+rsync_proxy=\"rsync://${username}:${password}@${ip_address}:${port}/\"
+no_proxy=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
+HTTP_PROXY=\"http://${username}:${password}@${ip_address}:${port}/\"
+HTTPS_PROXY=\"http://${username}:${password}@${ip_address}:${port}/\"
+FTP_PROXY=\"ftp://${username}:${password}@${ip_address}:${port}/\"
+RSYNC_PROXY=\"rsync://${username}:${password}@${ip_address}:${port}/\"
+NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
 "
 
   # Backup existing /etc/environment
@@ -57,6 +57,9 @@ export NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
 
   # Append proxy settings to /etc/environment
   echo "$proxy_settings" | sudo tee -a /etc/environment > /dev/null
+
+  # Apply proxy settings to current session
+  eval "$proxy_settings"
 
   echo "Proxy settings applied successfully!"
 }
