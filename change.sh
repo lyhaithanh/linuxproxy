@@ -144,6 +144,6 @@ bash
 source /etc/environment
 . /etc/environment
 . ~/.bashrc
-
+curl ifconfig.me
 echo -e "\nKiểm tra cấu hình proxy hiện tại:"
 env | grep -i proxy
