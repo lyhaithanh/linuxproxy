@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# Kiểm tra quyền root
+if [ "$EUID" -ne 0 ]; then
+    echo "Script này cần được chạy với quyền root (sudo)"
+    exit 1
+fi
+
 # Hàm kiểm tra địa chỉ IP
 validate_ip() {
   local ip="$1"
@@ -131,8 +138,12 @@ add_proxy_settings "$IP_ADDRESS" "$PORT" "$USERNAME" "$PASSWORD"
 
 echo "Cấu hình proxy đã hoàn tất."
 echo "Đang áp dụng cấu hình..."
+
+# Thử các phương thức khác nhau để áp dụng cấu hình
 bash
 source /etc/environment
+. /etc/environment
+. ~/.bashrc
 
 echo -e "\nKiểm tra cấu hình proxy hiện tại:"
 env | grep -i proxy
