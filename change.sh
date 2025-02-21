@@ -61,35 +61,39 @@ NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
   echo "Proxy settings have been added to /etc/environment and applied to the current session."
 }
 
+# Function to parse proxy string
+parse_proxy_string() {
+  local proxy_string="$1"
+  IFS=':' read -r -a parts <<< "$proxy_string"
+
+  if [[ ${#parts[@]} -ne 4 ]]; then
+    echo "Invalid proxy format. Expected format: IP:PORT:USERNAME:PASSWORD"
+    exit 1
+  fi
+
+  IP_ADDRESS="${parts[0]}"
+  PORT="${parts[1]}"
+  USERNAME="${parts[2]}"
+  PASSWORD="${parts[3]}"
+}
+
 # Main script execution
-echo "Please enter the proxy details:"
+echo "Please enter the proxy details in the format IP:PORT:USERNAME:PASSWORD:"
 
-# Prompt for IP address
-while true; do
-  read -p "IP Address: " IP_ADDRESS
-  if validate_ip "$IP_ADDRESS"; then
-    break
-  else
-    echo "Please enter a valid IP address."
-  fi
-done
+# Prompt for proxy string
+read -p "Proxy: " PROXY_STRING
 
-# Prompt for Port
-while true; do
-  read -p "Port: " PORT
-  if validate_port "$PORT"; then
-    break
-  else
-    echo "Please enter a valid port number (1-65535)."
-  fi
-done
+# Parse the proxy string
+parse_proxy_string "$PROXY_STRING"
 
-# Prompt for Username
-read -p "Username: " USERNAME
+# Validate IP and port
+if ! validate_ip "$IP_ADDRESS"; then
+  exit 1
+fi
 
-# Prompt for Password
-read -sp "Password: " PASSWORD
-echo
+if ! validate_port "$PORT"; then
+  exit 1
+fi
 
 # Add proxy settings
 add_proxy_settings "$IP_ADDRESS" "$PORT" "$USERNAME" "$PASSWORD"
