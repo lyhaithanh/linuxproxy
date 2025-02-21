@@ -7,11 +7,14 @@ validate_ip() {
     IFS='.' read -r -a octets <<< "$ip"
     for octet in "${octets[@]}"; do
       if ((octet > 255)); then
+        echo "Invalid IP: Octet $octet is greater than 255."
         return 1
       fi
     done
+    echo "IP address $ip is valid."
     return 0
   else
+    echo "Invalid IP: Does not match the expected format."
     return 1
   fi
 }
@@ -20,8 +23,10 @@ validate_ip() {
 validate_port() {
   local port="$1"
   if [[ $port =~ ^[0-9]+$ ]] && ((port >= 1 && port <= 65535)); then
+    echo "Port $port is valid."
     return 0
   else
+    echo "Invalid Port: Must be a number between 1 and 65535."
     return 1
   fi
 }
@@ -48,9 +53,10 @@ export NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
 
   # Backup existing /etc/environment
   sudo cp /etc/environment /etc/environment.bak
+  echo "Backup of /etc/environment created as /etc/environment.bak."
 
   # Append proxy settings to /etc/environment
-  echo "$proxy_settings" | sudo tee -a /etc/environment
+  echo "$proxy_settings" | sudo tee -a /etc/environment > /dev/null
 
   echo "Proxy settings applied successfully!"
 }
