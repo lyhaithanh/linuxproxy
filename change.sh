@@ -31,13 +31,14 @@ validate_port() {
   fi
 }
 
-# Function to add proxy settings
+# Function to add proxy settings to /etc/environment
 add_proxy_settings() {
   local ip_address="$1"
   local port="$2"
   local username="$3"
   local password="$4"
 
+  # Define proxy settings
   local proxy_settings="
 http_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
 https_proxy=\"http://${username}:${password}@${ip_address}:${port}/\"
@@ -51,36 +52,36 @@ RSYNC_PROXY=\"rsync://${username}:${password}@${ip_address}:${port}/\"
 NO_PROXY=\"localhost,127.0.0.1,192.168.1.1,::1,*.local\"
 "
 
-  # Backup existing /etc/environment
-  sudo cp /etc/environment /etc/environment.bak
-  echo "Backup of /etc/environment created as /etc/environment.bak."
-
   # Append proxy settings to /etc/environment
   echo "$proxy_settings" | sudo tee -a /etc/environment > /dev/null
 
-  # Apply proxy settings to current session
-  eval "$proxy_settings"
+  # Source the file to apply changes to the current session
+  source /etc/environment
 
-  echo "Proxy settings applied successfully!"
+  echo "Proxy settings have been added to /etc/environment and applied to the current session."
 }
 
-# Main script
-clear
-echo "Welcome to the Proxy Setup Script"
+# Main script execution
+if [[ $# -ne 4 ]]; then
+  echo "Usage: $0 <IP_ADDRESS> <PORT> <USERNAME> <PASSWORD>"
+  exit 1
+fi
 
-# Prompt user for proxy details in the format IP:PORT:USERNAME:PASSWORD
-while true; do
-  read -p "Nhập địa chỉ proxy (định dạng IP:PORT:USERNAME:PASSWORD): " proxy_input
-  IFS=':' read -r ip_address port username password <<< "$proxy_input"
+IP_ADDRESS="$1"
+PORT="$2"
+USERNAME="$3"
+PASSWORD="$4"
 
-  if validate_ip "$ip_address" && validate_port "$port" && [[ -n "$username" && -n "$password" ]]; then
-    break
-  else
-    echo "Định dạng không hợp lệ. Vui lòng nhập đúng định dạng IP:PORT:USERNAME:PASSWORD."
-  fi
-done
+# Validate IP and port
+if ! validate_ip "$IP_ADDRESS"; then
+  exit 1
+fi
+
+if ! validate_port "$PORT"; then
+  exit 1
+fi
 
 # Add proxy settings
-add_proxy_settings "$ip_address" "$port" "$username" "$password"
+add_proxy_settings "$IP_ADDRESS" "$PORT" "$USERNAME" "$PASSWORD"
 
-echo "Proxy đã được cấu hình thành công. Vui lòng khởi động lại hệ thống hoặc đăng xuất và đăng nhập lại để áp dụng thay đổi."
+echo "Proxy settings have been successfully configured."
