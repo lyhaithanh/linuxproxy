@@ -137,11 +137,9 @@ fi
 add_proxy_settings "$IP_ADDRESS" "$PORT" "$USERNAME" "$PASSWORD"
 
 echo "Cấu hình proxy đã hoàn tất."
-echo "Vui lòng chạy các lệnh sau để áp dụng cấu hình:"
-echo "source /etc/environment"
-echo "source ~/.bashrc"
-echo "Hoặc đăng xuất và đăng nhập lại để áp dụng cấu hình mới."
+echo "Đang áp dụng cấu hình..."
+. /etc/environment
+. ~/.bashrc
 
-# Hiển thị cấu hình hiện tại
 echo -e "\nKiểm tra cấu hình proxy hiện tại:"
 env | grep -i proxy
